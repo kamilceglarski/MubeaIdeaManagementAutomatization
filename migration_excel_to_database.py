@@ -1,9 +1,9 @@
 import pandas as pd
 import pyodbc
 
-# --- KONFIGURACJA ---
-EXCEL_FILE_PATH = r'C:\Users\ceglarskik\OneDrive - Mubea\Pulpit\Book1.xlsx'
-EXCEL_SHEET_NAME = 0
+from config import EXCEL_FILE_PATH, EXCEL_SHEET_NAME
+
+
 
 DB_SERVER = "UJAMSSQL02.group.mubea.net"
 DB_DATABASE = "it"

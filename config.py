@@ -1,9 +1,9 @@
-# Konfiguracja SharePoint
-SHAREPOINT_URL = 'https://mubea.sharepoint.com/sites/ITUjazd'
-SHAREPOINT_USER = 'twoj.login@mubea.com'  # Twój adres e-mail
-SHAREPOINT_PASSWORD = 'TwojeHasloDoKonta'
-SHAREPOINT_LIST_NAME = 'WnioskiUsprawnienia'
+import os
 
 # Konfiguracja Bazy Danych
 DB_SERVER = 'UJAMSSQL02.group.mubea.net'
 DB_DATABASE = 'it'
+
+# Ścieżka do pliku Excel (możesz zmienić na własną)
+EXCEL_FILE_PATH = r'C:\Users\ceglarskik\OneDrive - Mubea\Pulpit\Book1.xlsx'
+EXCEL_SHEET_NAME = 0
