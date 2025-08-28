@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Generator Raportów - Idea Management</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
+
+        :root {
+            --primary-color: #4a90e2;
+            --primary-color-dark: #357ABD;
+            --background-color: #f4f7f9;
+            --container-bg-color: #ffffff;
+            --text-color: #333;
+            --subtle-text-color: #7f8c8d;
+            --border-color: #dfe6e9;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 20px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .parameter-bar {
+            margin-bottom: 25px;
+            background-color: var(--container-bg-color);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .parameter-bar label { font-weight: 700; color: #555; margin-right: 5px; }
+
+        .parameter-bar input, .parameter-bar select, .parameter-bar button {
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            font-family: 'Lato', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .parameter-bar input:focus, .parameter-bar select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+
+        .parameter-bar button {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .parameter-bar button:hover {
+            background-color: var(--primary-color-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .report-container {
+            background-color: var(--container-bg-color);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+        }
+
+        .report-header {
+            text-align: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .report-header h1 { margin: 0; color: #2c3e50; font-size: 26px; }
+        .report-header .sub-title { margin: 5px 0 0; color: var(--subtle-text-color); font-size: 16px; }
+
+        .section-title {
+            font-size: 20px;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        table.report-table { width: 100%; border-collapse: collapse; }
+        .report-table td { padding: 12px 15px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        .report-table tr:last-child td { border-bottom: none; }
+        .report-table .label { width: 60%; color: #555; }
+        .report-table .value { font-weight: 700; font-size: 1.2em; text-align: right; }
+        .report-table .unit { color: var(--subtle-text-color); font-size: 0.9em; text-align: left; padding-left: 8px; width: 180px; }
+        .report-table .indicator { width: 40px; text-align: center; font-weight: 700; font-size: 1.5em; }
+        .indicator.bad { color: var(--error-color); }
+        .indicator.good { color: var(--success-color); }
+
+        .footer { margin-top: 40px; font-size: 12px; text-align: center; color: #95a5a6; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="parameter-bar">
+            <label for="year-selector">Rok:</label>
+            <input type="number" id="year-selector" value="2025" min="2018" max="2030">
+            <label for="start-month-selector">Od miesiąca:</label>
+            <select id="start-month-selector">
+                <option value="1">Styczeń</option> <option value="2">Luty</option> <option value="3">Marzec</option> <option value="4">Kwiecień</option> <option value="5">Maj</option> <option value="6">Czerwiec</option> <option value="7">Lipiec</option> <option value="8">Sierpień</option> <option value="9">Wrzesień</option> <option value="10">Październik</option> <option value="11">Listopad</option> <option value="12">Grudzień</option>
+            </select>
+            <label for="end-month-selector">Do miesiąca:</label>
+            <select id="end-month-selector">
+                <option value="1">Styczeń</option> <option value="2">Luty</option> <option value="3">Marzec</option> <option value="4">Kwiecień</option> <option value="5">Maj</option> <option value="6">Czerwiec</option> <option value="7">Lipiec</option> <option value="8">Sierpień</option> <option value="9">Wrzesień</option> <option value="10">Październik</option> <option value="11">Listopad</option> <option value="12" selected>Grudzień</option>
+            </select>
+            <label for="department-selector">Dział:</label>
+            <select id="department-selector">
+                 <option value="TDS">TDS</option> <option value="TS">TS</option> <option value="VS">VS</option> <option value="CP">CP</option> <option value="ZBF">ZBF</option> <option value="LAB">LAB</option> <option value="FI">FI</option> <option value="CO">CO</option> <option value="PU">PU</option> <option value="IT">IT</option> <option value="HR">HR</option> <option value="QM">QM</option> <option value="UTB">UTB</option> <option value="LOG">LOG</option>
+            </select>
+            <button id="generate-report-btn">Generuj Raport</button>
+        </div>
+
+        <div class="report-container">
+            <div class="report-header">
+                <h1>Idea Management - Raport Sumaryczny</h1>
+                <p class="sub-title" id="report-period">Wybierz parametry i wygeneruj raport</p>
+                <p class="sub-title" id="report-department"></p>
+            </div>
+
+            <h2 class="section-title">Kluczowe Wskaźniki Efektywności (KPI)</h2>
+            <table class="report-table">
+                <tbody>
+                    <tr>
+                        <td class="label">A. Wnioski na pracownika (YTD)</td>
+                        <td class="indicator" id="kpi-wnioski-indicator"></td>
+                        <td class="value" id="kpi-wnioski-value">...</td>
+                        <td class="unit">wnioski / pracownika</td>
+                    </tr>
+                    <tr>
+                        <td class="label">B. Średni czas realizacji</td>
+                        <td class="indicator" id="kpi-czas-indicator"></td>
+                        <td class="value" id="kpi-czas-value">...</td>
+                        <td class="unit">dni</td>
+                    </tr>
+                    <tr>
+                        <td class="label">C. Średni benefit na wniosek</td>
+                        <td class="indicator" id="kpi-benefit-indicator"></td>
+                        <td class="value" id="kpi-benefit-value">...</td>
+                        <td class="unit">€ / wniosek</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 class="section-title">Raport Operacyjny</h2>
+            <table class="report-table">
+                <tbody>
+                    <tr>
+                        <td class="label">1. Zgłoszone wnioski</td>
+                        <td class="value" id="op-zgloszone">...</td>
+                        <td class="unit">Ilość</td>
+                    </tr>
+                    <tr>
+                        <td class="label">2. Wnioski otwarte</td>
+                        <td class="value" id="op-otwarte">...</td>
+                        <td class="unit">Ilość</td>
+                    </tr>
+                    <tr>
+                        <td class="label">3. Wnioski otwarte > 90 dni</td>
+                        <td class="value" id="op-otwarte-90dni">...</td>
+                        <td class="unit">Ilość</td>
+                    </tr>
+                    <tr>
+                        <td class="label">4. Zrealizowane</td>
+                        <td class="value" id="op-zrealizowane">...</td>
+                        <td class="unit">Ilość</td>
+                    </tr>
+                    <tr>
+                        <td class="label">5. Odrzucone</td>
+                        <td class="value" id="op-odrzucone">...</td>
+                        <td class="unit">Ilość</td>
+                    </tr>
+                    <tr>
+                        <td class="label">6. Zysk wirtualny</td>
+                        <td class="value" id="op-zysk-wirtualny">...</td>
+                        <td class="unit">€</td>
+                    </tr>
+                    <tr>
+                        <td class="label">7. Zysk mierzalny</td>
+                        <td class="value" id="op-zysk-mierzalny">...</td>
+                        <td class="unit">€</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="footer">
+                <span id="generation-date"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('generate-report-btn').addEventListener('click', async () => {
+            // ... zbieranie wartości z filtrów (bez zmian) ...
+            const rok = document.getElementById('year-selector').value;
+            const miesiacStart = document.getElementById('start-month-selector').value;
+            const miesiacKoniec = document.getElementById('end-month-selector').value;
+            const dzial = document.getElementById('department-selector').value;
+            
+            try {
+                // W prawdziwej aplikacji odkomentuj ten blok:
+                const response = await fetch('/api/raport', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ rok, miesiac_start: miesiacStart, miesiac_koniec: miesiacKoniec, dzial }),
+                });
+
+                if (!response.ok) throw new Error('Błąd serwera!');
+                const data = await response.json();
+                
+                // Wypełnianie KPI
+                document.getElementById('kpi-wnioski-value').textContent = data.kpiWnioskiNaPracownika.toLocaleString('pl-PL');
+                const kpiWnioskiIndicator = document.getElementById('kpi-wnioski-indicator');
+                if (data.kpiWnioskiNaPracownika >= 1.0) {
+                    kpiWnioskiIndicator.textContent = '✓';
+                    kpiWnioskiIndicator.className = 'indicator good';
+                } else {
+                    kpiWnioskiIndicator.textContent = '✗';
+                    kpiWnioskiIndicator.className = 'indicator bad';
+                }
+
+                document.getElementById('kpi-czas-value').textContent = data.kpiCzasRealizacji.toLocaleString('pl-PL');
+                const kpiCzasIndicator = document.getElementById('kpi-czas-indicator');
+                if (data.kpiCzasRealizacji <= 90) {
+                    kpiCzasIndicator.textContent = '✓';
+                    kpiCzasIndicator.className = 'indicator good';
+                } else {
+                    kpiCzasIndicator.textContent = '✗';
+                    kpiCzasIndicator.className = 'indicator bad';
+                }
+
+                document.getElementById('kpi-benefit-value').textContent = data.kpiBenefitNaWniosek.toLocaleString('pl-PL');
+                const kpiBenefitIndicator = document.getElementById('kpi-benefit-indicator');
+                if (data.kpiBenefitNaWniosek >= 1000) {
+                    kpiBenefitIndicator.textContent = '✓';
+                    kpiBenefitIndicator.className = 'indicator good';
+                } else {
+                    kpiBenefitIndicator.textContent = '✗';
+                    kpiBenefitIndicator.className = 'indicator bad';
+                }
+
+                // Wypełnianie Raportu Operacyjnego
+                document.getElementById('op-zgloszone').textContent = data.opZgloszone.toLocaleString('pl-PL');
+                document.getElementById('op-zrealizowane').textContent = data.opZrealizowane.toLocaleString('pl-PL');
+                //document.getElementById('op-otwarte').textContent = data.opOtwarte.toLocaleString('pl-PL');
+                //document.getElementById('op-otwarte-90dni').textContent = data.opOtwarte90Dni.toLocaleString('pl-PL');
+                document.getElementById('op-odrzucone').textContent = data.opOdrzucone.toLocaleString('pl-PL');
+                //document.getElementById('op-zysk-wirtualny').textContent = data.opZyskWirtualny.toLocaleString('pl-PL');
+                //document.getElementById('op-zysk-mierzalny').textContent = data.opZyskMierzalny.toLocaleString('pl-PL');
+
+                // Aktualizacja nagłówka i stopki
+                const startMonthName = document.getElementById('start-month-selector').options[document.getElementById('start-month-selector').selectedIndex].text;
+                const endMonthName = document.getElementById('end-month-selector').options[document.getElementById('end-month-selector').selectedIndex].text;
+                document.getElementById('report-period').textContent = `Raport za okres: ${startMonthName} - ${endMonthName} ${rok}`;
+                document.getElementById('report-department').textContent = `Dział: ${dzial}`;
+                document.getElementById('generation-date').textContent = "Raport wygenerowano: " + new Date().toLocaleString('pl-PL');
+
+            } catch (error) {
+                console.error('Wystąpił błąd:', error);
+                alert('Wystąpił błąd podczas generowania raportu. Sprawdź konsolę deweloperską (F12) po więcej informacji.');
+            }
+        });
+    </script>
+</body>
+</html>
