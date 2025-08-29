@@ -7,7 +7,10 @@ MUBEA IDEA MANAGEMENT - AUTOMATYZACJA
 
 ZADANIE: Przeanalizować plik Excel i zidentyfikować, w jaki sposób są obliczane wskaźniki/KPI. Czy na pewno zapytania sql są poprawnie skonstruowane. 
 
-- Na jakiej podstawie obliczana jest wartość zysk mierzalny 
+- Na jakiej podstawie obliczana jest wartość zysk mierzalny
+
+- W Power Automate zmienić w Automatyzacji o nazwie: Przesłanie danych z formularza do sharepoint akcję Mapowanie działów - JSON
+  (dostosować mapowanie osob przypisanych do konkretnego Wniosku na podstawie działu) 
 
 ------------------------------------------------------------
 
