@@ -1,5 +1,34 @@
-
+============================================================
 MUBEA IDEA MANAGEMENT - AUTOMATYZACJA
+============================================================
+============================================================
+                          TODO
+============================================================
+
+ZADANIE: Przeanalizować plik Excel i zidentyfikować, w jaki sposób są obliczane wskaźniki/KPI.
+
+------------------------------------------------------------
+
+CEL:
+    Zrozumieć logikę biznesową i formuły używane do obliczeń
+    kluczowych wskaźników, takich jak kpiWnioskiNaPracownika,
+    kpiCzasRealizacji czy kpiBenefitNaWniosek.
+
+------------------------------------------------------------
+
+KROKI DO WYKONANIA:
+
+    - Sprawdzić formuły w komórkach, które wyświetlają te
+      wskaźniki.
+
+    - Zidentyfikować komórki/kolumny źródłowe, z których
+      pobierane są dane.
+
+    - Udokumentować logikę w celu jej późniejszego
+      odtworzenia w Pythonie lub po stronie bazy danych
+      (np. w widoku SQL).
+
+============================================================
 
 
 Projekt ten automatyzuje proces synchronizacji danych z pliku Excel (połączonego z listą SharePoint) do bazy danych SQL Server oraz udostępnia prosty interfejs webowy do generowania raportów.
