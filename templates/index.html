@@ -108,6 +108,17 @@
         }
 
         table.report-table { width: 100%; border-collapse: collapse; }
+
+        .report-table .okres {
+            font-size: 0.85em; /* Zmniejszenie czcionki do 85% rozmiaru standardowego */
+            color: var(--subtle-text-color); /* Użycie stonowanego koloru z Twojej palety */
+            font-weight: 400; /* Upewnienie się, że tekst nie jest pogrubiony */
+            text-align: left; /* Wyrównanie do lewej strony */
+            padding-left: 8px; /* Dodanie takiego samego odstępu jak w kolumnie 'unit' */
+            white-space: nowrap; /* Zapobieganie łamaniu linii w datach */
+            width: 1%; /* Pozwala kolumnie zająć minimalną potrzebną szerokość */
+        }
+
         .report-table td { padding: 12px 15px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
         .report-table tr:last-child td { border-bottom: none; }
         .report-table .label { width: 60%; color: #555; }
@@ -130,17 +141,14 @@
         <div class="parameter-bar">
             <label for="year-selector">Rok:</label>
             <input type="number" id="year-selector" value="2025" min="2018" max="2030">
-            <label for="start-month-selector">Od miesiąca:</label>
-            <select id="start-month-selector">
-                <option value="1">Styczeń</option> <option value="2">Luty</option> <option value="3">Marzec</option> <option value="4">Kwiecień</option> <option value="5">Maj</option> <option value="6">Czerwiec</option> <option value="7">Lipiec</option> <option value="8">Sierpień</option> <option value="9">Wrzesień</option> <option value="10">Październik</option> <option value="11">Listopad</option> <option value="12">Grudzień</option>
-            </select>
-            <label for="end-month-selector">Do miesiąca:</label>
+            
+            <label for="end-month-selector">Miesiąc:</label>
             <select id="end-month-selector">
                 <option value="1">Styczeń</option> <option value="2">Luty</option> <option value="3">Marzec</option> <option value="4">Kwiecień</option> <option value="5">Maj</option> <option value="6">Czerwiec</option> <option value="7">Lipiec</option> <option value="8">Sierpień</option> <option value="9">Wrzesień</option> <option value="10">Październik</option> <option value="11">Listopad</option> <option value="12" selected>Grudzień</option>
             </select>
             <label for="department-selector">Dział:</label>
             <select id="department-selector">
-                 <option value="TDS">TDS</option> <option value="TS">TS</option> <option value="VS">VS</option> <option value="CP">CP</option> <option value="ZBF">ZBF</option> <option value="LAB">LAB</option> <option value="FI">FI</option> <option value="CO">CO</option> <option value="PU">PU</option> <option value="IT">IT</option> <option value="HR">HR</option> <option value="QM">QM</option> <option value="UTB">UTB</option> <option value="LOG">LOG</option>
+                 <option value="TDS">TDS</option> <option value="TS">TS</option> <option value="VS">VS</option> <option value="CP">CP</option> <option value="ZBF">ZBF</option>  <option value="PO">PO</option>
             </select>
             <button id="generate-report-btn">Generuj Raport</button>
         </div>
@@ -156,22 +164,33 @@
             <table class="report-table">
                 <tbody>
                     <tr>
-                        <td class="label">A. Wnioski na pracownika (YTD)</td>
-                        <td class="indicator" id="kpi-wnioski-indicator"></td>
-                        <td class="value" id="kpi-wnioski-value">...</td>
-                        <td class="unit">wnioski / pracownika</td>
+                        <td colspan="5" style="background: #f9f9f9; text-align: right; border-bottom: none;">
+                            <label for="liczba-pracownikow" style="font-weight: 700; color: #555; margin-right: 8px;">
+                                Liczba pracowników:
+                            </label>
+                            <input type="number" id="liczba-pracownikow" min="1" value="100" style="width: 80px; padding: 6px 10px; border-radius: 6px; border: 1px solid #dfe6e9;">
+                        </td>
                     </tr>
                     <tr>
-                        <td class="label">B. Średni czas realizacji</td>
+                        <td class="label">A.  1 wniosek / pracownik / rok</td>
+                        <td class="indicator" id="kpi-wnioski-indicator"></td>
+                        <td class="value" id="kpi-wnioski-value">...</td>
+                        <td class="unit">wnioski / pracownika / YTD</td>
+                        <td class="okres" id="okres-wnioski"></td>
+                    </tr>
+                    <tr>
+                        <td class="label">B.  Ø czas realizacji ≤ 90 dni</td>
                         <td class="indicator" id="kpi-czas-indicator"></td>
                         <td class="value" id="kpi-czas-value">...</td>
                         <td class="unit">dni</td>
+                        <td class="okres" id="okres-sredni-czas-realizacji"></td>
                     </tr>
                     <tr>
-                        <td class="label">C. Średni benefit na wniosek</td>
+                        <td class="label">C.  Ø benfit 1.000 € / wniosek</td>
                         <td class="indicator" id="kpi-benefit-indicator"></td>
                         <td class="value" id="kpi-benefit-value">...</td>
                         <td class="unit">€ / wniosek</td>
+                        <td class="okres" id="okres-sredni-benefit"></td>
                     </tr>
                 </tbody>
             </table>
@@ -180,39 +199,52 @@
             <table class="report-table">
                 <tbody>
                     <tr>
-                        <td class="label">1. Zgłoszone wnioski</td>
+                        <td class="label">1. ZGŁOSZONE</td>
                         <td class="value" id="op-zgloszone">...</td>
                         <td class="unit">Ilość</td>
+                        <td class="okres" id="okres-zgloszone"></td>
                     </tr>
                     <tr>
-                        <td class="label">2. Wnioski otwarte</td>
+                        <td class="label">2. ZGŁOSZONE_OTWARTE</td>
                         <td class="value" id="op-otwarte">...</td>
                         <td class="unit">Ilość</td>
+                        <td class="okres" id="okres-otwarte"></td>
                     </tr>
                     <tr>
-                        <td class="label">3. Wnioski otwarte > 90 dni</td>
+                        <td class="label">3. ZGŁOSZONE_OTWARTE > 90 dni</td>
                         <td class="value" id="op-otwarte-90dni">...</td>
                         <td class="unit">Ilość</td>
+                        <td class="okres" id="okres-otwarte-90dni"></td>
                     </tr>
                     <tr>
-                        <td class="label">4. Zrealizowane</td>
+                        <td class="label">4. ZAAKCEPTOWANE_ZREALIZOWANE</td>
                         <td class="value" id="op-zrealizowane">...</td>
                         <td class="unit">Ilość</td>
+                        <td class="okres" id="okres-zrealizowane"></td>
                     </tr>
                     <tr>
-                        <td class="label">5. Odrzucone</td>
+                        <td class="label">5. ODRZUCONE</td>
                         <td class="value" id="op-odrzucone">...</td>
                         <td class="unit">Ilość</td>
+                        <td class="okres" id="okres-odrzucone"></td>
+                    </tr>
+                     <tr>
+                        <td class="label">6. Ø CZAS REALIZACJI</td>
+                        <td class="value" id="op-sredni-czas-realizacji">...</td>
+                        <td class="unit">Dni</td>
+                        <td class="okres" id="okres-sredni-czas"></td>
                     </tr>
                     <tr>
-                        <td class="label">6. Zysk wirtualny</td>
+                        <td class="label">7. ZYSK WIRTUALNY</td>
                         <td class="value" id="op-zysk-wirtualny">...</td>
-                        <td class="unit">€</td>
+                        <td class="unit">Σ €</td>
+                        <td class="okres" id="okres-zysk-wirtualny"></td>
                     </tr>
                     <tr>
-                        <td class="label">7. Zysk mierzalny</td>
+                        <td class="label">8. ZYSK MIERZALNY</td>
                         <td class="value" id="op-zysk-mierzalny">...</td>
-                        <td class="unit">€</td>
+                        <td class="unit">Σ €</td>
+                        <td class="okres" id="okres-zysk-mierzalny"></td>
                     </tr>
                 </tbody>
             </table>
@@ -224,28 +256,66 @@
     </div>
 
     <script>
+        const miesiace = [
+                '', 'Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec',
+                'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'
+            ];
+
+        function ustawOkres(rok, miesiac) {
+            // Obliczanie ostatniego dnia miesiąca
+            const ostatniDzien = new Date(rok, miesiac, 0).getDate();
+            // Formatowanie miesiąca, aby miał dwa znaki (np. 01, 08)
+            const miesiacFormat = String(miesiac).padStart(2, '0');
+            
+            const okres = `Styczeń ${rok} - ${miesiace[parseInt(miesiac, 10)]} ${rok}`;
+            const okres2 = `Styczeń ${rok-1} - ${miesiace[parseInt(miesiac, 10)]} ${rok}`;
+
+            ['okres-wnioski', 'okres-sredni-benefit','okres-zysk-wirtualny', 'okres-zysk-mierzalny', 'okres-zgloszone', 'okres-zrealizowane', 'okres-odrzucone', 'okres-zaakceptowane-zrealizowane'].forEach(id => {
+                const elementOkresu = document.getElementById(id);
+                if (elementOkresu) {
+                    elementOkresu.textContent = okres;
+                }
+            });
+            ['okres-sredni-czas-realizacji', 'okres-otwarte','okres-otwarte-90dni', 'okres-sredni-czas'].forEach(id => {
+                const elementOkresu = document.getElementById(id);
+                if (elementOkresu) {
+                    elementOkresu.textContent = okres2;
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const rok = document.getElementById('year-selector').value;
+            const miesiac = document.getElementById('end-month-selector').value;
+            ustawOkres(rok, miesiac);
+        });
+
         document.getElementById('generate-report-btn').addEventListener('click', async () => {
             // ... zbieranie wartości z filtrów (bez zmian) ...
+            
             const rok = document.getElementById('year-selector').value;
-            const miesiacStart = document.getElementById('start-month-selector').value;
             const miesiacKoniec = document.getElementById('end-month-selector').value;
             const dzial = document.getElementById('department-selector').value;
-            
+            const liczbaPracownikow = document.getElementById('liczba-pracownikow').value;
+
+            ustawOkres(rok, miesiacKoniec);
+
             try {
-                // W prawdziwej aplikacji odkomentuj ten blok:
                 const response = await fetch('/api/raport', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ rok, miesiac_start: miesiacStart, miesiac_koniec: miesiacKoniec, dzial }),
+                    body: JSON.stringify({ rok, miesiac_koniec: miesiacKoniec, dzial, liczba_pracownikow: liczbaPracownikow }),
                 });
 
                 if (!response.ok) throw new Error('Błąd serwera!');
                 const data = await response.json();
                 
                 // Wypełnianie KPI
-                document.getElementById('kpi-wnioski-value').textContent = data.kpiWnioskiNaPracownika.toLocaleString('pl-PL');
+
+                kpi_output =  (data.kpiWnioskiNaPracownika / liczbaPracownikow).toFixed(2);
+                document.getElementById('kpi-wnioski-value').textContent =  kpi_output.toLocaleString('pl-PL');
                 const kpiWnioskiIndicator = document.getElementById('kpi-wnioski-indicator');
-                if (data.kpiWnioskiNaPracownika >= 1.0) {
+                if (data.kpi_output >= 1.0) {
                     kpiWnioskiIndicator.textContent = '✓';
                     kpiWnioskiIndicator.className = 'indicator good';
                 } else {
@@ -275,13 +345,13 @@
 
                 // Wypełnianie Raportu Operacyjnego
                 document.getElementById('op-zgloszone').textContent = data.opZgloszone.toLocaleString('pl-PL');
-                document.getElementById('op-zrealizowane').textContent = data.opZrealizowane.toLocaleString('pl-PL');
-                //document.getElementById('op-otwarte').textContent = data.opOtwarte.toLocaleString('pl-PL');
-                //document.getElementById('op-otwarte-90dni').textContent = data.opOtwarte90Dni.toLocaleString('pl-PL');
+                document.getElementById('op-otwarte').textContent = data.opZgloszoneOtwarte.toLocaleString('pl-PL');
                 document.getElementById('op-odrzucone').textContent = data.opOdrzucone.toLocaleString('pl-PL');
-                //document.getElementById('op-zysk-wirtualny').textContent = data.opZyskWirtualny.toLocaleString('pl-PL');
-                //document.getElementById('op-zysk-mierzalny').textContent = data.opZyskMierzalny.toLocaleString('pl-PL');
-
+                document.getElementById('op-zrealizowane').textContent = data.opZaakceptowaneZrealizowane.toLocaleString('pl-PL');
+                document.getElementById('op-otwarte-90dni').textContent = data.opOtwarte90dni.toLocaleString('pl-PL');
+                document.getElementById('op-zysk-wirtualny').textContent = data.opZyskWirtualny.toLocaleString('pl-PL');
+                document.getElementById('op-zysk-mierzalny').textContent = data.opZyskMierzalny.toLocaleString('pl-PL');
+                document.getElementById('op-sredni-czas-realizacji').textContent = data.opSredniCzasRealizacji.toLocaleString('pl-PL');
                 // Aktualizacja nagłówka i stopki
                 const startMonthName = document.getElementById('start-month-selector').options[document.getElementById('start-month-selector').selectedIndex].text;
                 const endMonthName = document.getElementById('end-month-selector').options[document.getElementById('end-month-selector').selectedIndex].text;
@@ -291,7 +361,6 @@
 
             } catch (error) {
                 console.error('Wystąpił błąd:', error);
-                alert('Wystąpił błąd podczas generowania raportu. Sprawdź konsolę deweloperską (F12) po więcej informacji.');
             }
         });
     </script>
