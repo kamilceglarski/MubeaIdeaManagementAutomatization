@@ -7,10 +7,13 @@ MUBEA IDEA MANAGEMENT - AUTOMATYZACJA
 
 ZADANIE: Przeanalizować plik Excel i zidentyfikować, w jaki sposób są obliczane wskaźniki/KPI. Czy na pewno zapytania sql są poprawnie skonstruowane. 
 
-- Na jakiej podstawie obliczana jest wartość zysk mierzalny
+- Wywnioskaować na podstaiwe innych plików Excel na jakiej podstawie obliczana jest wartość zysk mierzalny. 
+  Napisac zapytanie SQL w sql_queries.py i dopisać kod 
 
 - W Power Automate zmienić w Automatyzacji o nazwie: Przesłanie danych z formularza do sharepoint akcję Mapowanie działów - JSON
-  (dostosować mapowanie osob przypisanych do konkretnego Wniosku na podstawie działu) 
+  (dostosować mapowanie osob przypisanych do konkretnego Wniosku na podstawie działu)
+
+  
 
 ------------------------------------------------------------
 
