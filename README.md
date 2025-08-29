@@ -1,6 +1,6 @@
-========================================
+
 MUBEA IDEA MANAGEMENT - AUTOMATYZACJA
-========================================
+
 
 Projekt ten automatyzuje proces synchronizacji danych z pliku Excel (połączonego z listą SharePoint) do bazy danych SQL Server oraz udostępnia prosty interfejs webowy do generowania raportów.
 
