@@ -1,81 +1,133 @@
-Mubea Idea Management - Automatyzacja
-Poniższa instrukcja opisuje proces konfiguracji serwera w celu automatycznego odświeżania raportu w pliku Excel i importowania danych do bazy SQL Server. Proces składa się z dwóch zaplanowanych zadań.
+----------------------------------------
+MUBEA IDEA MANAGEMENT - AUTOMATYZACJA
+----------------------------------------
+----------------------------------------
+                          TODO
+----------------------------------------
 
-Krok 1: Przygotowanie serwera ⚙️
-Zanim skonfigurujesz harmonogram, upewnij się, że na serwerze spełnione są poniższe wymagania:
+ZADANIE: Przeanalizować plik Excel i zidentyfikować, w jaki sposób są obliczane wskaźniki/KPI. Czy na pewno zapytania sql są poprawnie skonstruowane. 
 
-Lokalizacja skryptów: Oba skrypty, odswiez_raport.ps1 (PowerShell) oraz import_excel.py (Python), znajdują się w znanej lokalizacji (np. C:\Automatyzacja).
+- Na jakiej podstawie obliczana jest wartość zysk mierzalny
 
-Dostęp do pliku Excel: Serwer musi mieć dostęp do pliku źródłowego Book1.xlsx.
+- W Power Automate zmienić w Automatyzacji o nazwie: Przesłanie danych z formularza do sharepoint akcję Mapowanie działów - JSON
+  (dostosować mapowanie osob przypisanych do konkretnego Wniosku na podstawie działu) 
 
-Zainstalowany Microsoft Excel: Wymagany do uruchomienia skryptu PowerShell, który odświeża dane.
+------------------------------------------------------------
 
-Zainstalowany Python i biblioteki: Na serwerze musi być zainstalowany Python oraz pakiety: pandas, openpyxl i pyodbc.
+============================================================
 
-Zainstalowane sterowniki ODBC: Serwer musi mieć zainstalowany sterownik "ODBC Driver for SQL Server" do komunikacji z bazą danych.
 
-Krok 2: Konfiguracja zadań w Harmonogramie Zadań ⏰
-Otwórz Harmonogram Zadań (Task Scheduler) na serwerze i postępuj zgodnie z poniższymi instrukcjami, tworząc dwa oddzielne zadania.
+Projekt ten automatyzuje proces synchronizacji danych z pliku Excel (połączonego z listą SharePoint) do bazy danych SQL Server oraz udostępnia prosty interfejs webowy do generowania raportów.
 
-✅ Zadanie 1: Automatyczne odświeżanie pliku Excel (PowerShell)
-To zadanie uruchomi skrypt, który wykona "Refresh All" w Twoim pliku Excel.
+Automatyzacja opiera się na dwóch skryptach uruchamianych cyklicznie przez *Harmonogram Zadań Windows*:
 
-Utwórz zadanie: W panelu Akcje kliknij Utwórz zadanie... (Create Task...).
+1.  Skrypt PowerShell: Odświeża dane w pliku Excel (`Refresh All`).
+2.  Skrypt Python: Importuje zaktualizowane dane z pliku Excel do docelowej bazy danych SQL, realizując logikę UPSERT lub "Wyczyść i Wczytaj".
 
-Zakładka "Ogólne" (General):
+Dodatkowo, Aplikacja Flask serwuje interfejs webowy do dynamicznego raportowania na podstawie danych z bazy.
 
-Nazwa: 1 - Odswiezanie Raportu Excel
+----------------------------------------
+⚙️ WYMAGANIA WSTĘPNE
+----------------------------------------
 
-Zaznacz opcję "Uruchom niezależnie od tego, czy użytkownik jest zalogowany".
+Przed wdrożeniem upewnij się, że na serwerze docelowym zainstalowane jest następujące oprogramowanie:
 
-Zaznacz opcję "Uruchom z najwyższymi uprawnieniami".
+* Python (zalecana wersja 3.8+).
+* Microsoft Excel (pełna wersja desktopowa, wymagana do odświeżania danych przez skrypt PowerShell).
+* Microsoft ODBC Driver for SQL Server.
+* Git do sklonowania repozytorium.
 
-Zakładka "Wyzwalacze" (Triggers):
+----------------------------------------
+🚀 INSTALACJA I KONFIGURACJA
+----------------------------------------
 
-Kliknij Nowy....
+### 1. Klonowanie Repozytorium
 
-Ustaw harmonogram, np. Codziennie o godzinie 07:00:00.
+Sklonuj repozytorium do wybranej lokalizacji na serwerze (np. C:\MubeaAutomation):
 
-Zakładka "Akcje" (Actions):
+    git clone https://github.com/kamilceglarski/MubeaIdeaManagementAutomatization.git
+    cd MubeaIdeaManagementAutomatization
 
-Kliknij Nowy....
 
-Akcja: Uruchom program.
+### 2. Konfiguracja Środowiska Python
 
-Program/skrypt: powershell.exe
+Zalecane jest użycie wirtualnego środowiska, aby odizolować zależności projektu od innych aplikacji.
 
-Dodaj argumenty:
+    # Utwórz wirtualne środowisko
+    python -m venv venv
 
--ExecutionPolicy Bypass -File "C:\Automatyzacja\odswiez_raport.ps1"
-✅ Zadanie 2: Import danych z Excela do bazy (Python)
-To zadanie uruchomi skrypt Pythona, który przeniesie odświeżone dane do bazy SQL.
+    # Aktywuj środowisko
+    .\venv\Scripts\activate
 
-Utwórz zadanie: Ponownie kliknij Utwórz zadanie....
+    # Zainstaluj wszystkie wymagane biblioteki
+    pip install -r requirements.txt
 
-Zakładka "Ogólne" (General):
 
-Nazwa: 2 - Import Danych Excel do SQL
+### 3. Konfiguracja Zmiennych Środowiskowych
 
-Zaznacz opcje "Uruchom niezależnie od tego, czy użytkownik jest zalogowany" oraz "Uruchom z najwyższymi uprawnieniami".
+Projekt korzysta z pliku .env do bezpiecznego przechowywania wrażliwych danych, takich jak dane logowania do bazy czy ścieżki plików.
 
-Zakładka "Wyzwalacze" (Triggers):
+1.  Stwórz kopię pliku .env.example i zmień jej nazwę na .env.
+2.  Otwórz plik .env w edytorze tekstu i uzupełnij go poprawnymi wartościami dla Twojego środowiska.
 
-Kliknij Nowy....
 
-Ustaw harmonogram przesunięty o 5 minut w stosunku do pierwszego zadania, np. Codziennie o godzinie 07:05:00, aby dać czas na odświeżenie pliku.
+----------------------------------------
+⏰ WDROŻENIE - SYNCHRONIZACJA AUTOMATYCZNA
+----------------------------------------
 
-Zakładka "Akcje" (Actions):
+Otwórz *Harmonogram Zadań* (Task Scheduler) na serwerze i skonfiguruj dwa oddzielne zadania, które będą uruchamiać skrypty w odpowiedniej kolejności.
 
-Kliknij Nowy....
+### ✅ Zadanie 1: Odświeżanie Pliku Excel (PowerShell)
 
-Akcja: Uruchom program.
+To zadanie uruchomi skrypt `odswiez_raport.ps1`, który wykona operację "Refresh All" w pliku Excel.
 
-Program/skrypt: Podaj pełną ścieżkę do pliku python.exe, np.:
+* Zakładka "Ogólne" (General):
+    -   Nazwa: `1 - Mubea IM - Odswiezanie Raportu Excel`
+    -   Zaznacz: *"Uruchom niezależnie od tego, czy użytkownik jest zalogowany"*.
+    -   Zaznacz: *"Uruchom z najwyższymi uprawnieniami"*.
 
-C:\Python39\python.exe
-Dodaj argumenty: Podaj pełną ścieżkę do skryptu importującego w cudzysłowie, np.:
+* Zakładka "Wyzwalacze" (Triggers):
+    -   Nowy...: Ustaw harmonogram, np. *Codziennie o 07:00:00*.
 
-"C:\Automatyzacja\import_excel.py"
-Rozpocznij w (opcjonalnie): Wpisz ścieżkę do folderu, w którym znajduje się skrypt:
+* Zakładka "Akcje" (Actions):
+    -   Nowy...:
+        -   Akcja: `Uruchom program`
+        -   Program/skrypt: `powershell.exe`
+        -   Dodaj argumenty: `-ExecutionPolicy Bypass -File "C:\MubeaAutomation\odswiez_raport.ps1"` (dostosuj ścieżkę do lokalizacji projektu).
 
-C:\Automatyzacja\
+### ✅ Zadanie 2: Import Danych do Bazy (Python)
+
+To zadanie uruchomi skrypt `migration_excel_to_database.py`, który przeniesie odświeżone dane do bazy SQL. Musi być uruchamiane *po* zakończeniu zadania nr 1.
+
+* Zakładka "Ogólne" (General):
+    -   Nazwa: `2 - Mubea IM - Import Danych do SQL`
+    -   Ustaw te same opcje co w Zadaniu 1.
+
+* Zakładka "Wyzwalacze" (Triggers):
+    -   Nowy...: Ustaw harmonogram przesunięty o kilka minut względem pierwszego zadania, np. *Codziennie o 07:05:00*.
+
+* Zakładka "Akcje" (Actions):
+    -   Nowy...:
+        -   Akcja: `Uruchom program`
+        -   Program/skrypt: Podaj pełną ścieżkę do `python.exe` z Twojego wirtualnego środowiska, np. `C:\MubeaAutomation\venv\Scripts\python.exe`.
+        -   Dodaj argumenty: Podaj pełną ścieżkę do skryptu importującego, np. `"C:\MubeaAutomation\migration_excel_to_database.py"`.
+        -   Rozpocznij w (opcjonalnie): Wpisz ścieżkę do głównego folderu projektu, np. `C:\MubeaAutomation\`.
+
+
+----------------------------------------
+📊 URUCHOMIENIE APLIKACJI WEBOWEJ
+----------------------------------------
+
+Aby uruchomić interfejs do generowania raportów, wykonaj poniższe kroki.
+
+1.  Otwórz terminal w głównym folderze projektu.
+
+2.  Aktywuj wirtualne środowisko:
+    
+        .\venv\Scripts\activate
+
+3.  Uruchom serwer deweloperski Flask:
+
+        flask run
+
+Aplikacja będzie domyślnie dostępna w przeglądarce pod adresem `http://127.0.0.1:5000`.
