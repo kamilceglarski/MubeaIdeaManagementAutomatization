@@ -102,12 +102,12 @@ def raport_liczba_wnioskow():
 
             #Raport Operacyjny 
             'opZgloszone': zgloszone,                                  #1. ZGŁOSZONE
-            'opZgloszoneOtwarte': otwarte,                                   #2. ZGŁOSZONE_OTWARTE
-            'opOtwarte90dni': otwarte_90dni,                                       #3. ZGŁOSZONE_OTWARTE > 90 dni
+            'opZgloszoneOtwarte': otwarte,                             #2. ZGŁOSZONE_OTWARTE
+            'opOtwarte90dni': otwarte_90dni,                           #3. ZGŁOSZONE_OTWARTE > 90 dni
             'opZaakceptowaneZrealizowane': zaakceptowane_zrealizowane, #4. ZAAKCEPTOWANE_ZREALIZOWANE
             'opOdrzucone': odrzucone,                                  #5. ODRZUCONE
-            'opSredniCzasRealizacji': sredni_czas_realizacji,                               #6. Ø CZAS REALIZACJI                           
-            'opZyskWirtualny': zysk_wirtualny,                                      #7. ZYSK WIRTUALNY
+            'opSredniCzasRealizacji': sredni_czas_realizacji,          #6. Ø CZAS REALIZACJI                           
+            'opZyskWirtualny': zysk_wirtualny,                         #7. ZYSK WIRTUALNY
             'opZyskMierzalny': 0                                       #8. ZYSK MIERZALNY
         })
 

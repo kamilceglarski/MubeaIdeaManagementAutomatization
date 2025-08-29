@@ -333,9 +333,10 @@
                     kpiCzasIndicator.className = 'indicator bad';
                 }
 
-                document.getElementById('kpi-benefit-value').textContent = data.kpiBenefitNaWniosek.toLocaleString('pl-PL');
+                kpi_benefit_output = ((data.opZyskWirtualny + data.opZyskMierzalny) / data.opZgloszone).toFixed(2)
+                document.getElementById('kpi-benefit-value').textContent = kpi_benefit_output.toLocaleString('pl-PL');
                 const kpiBenefitIndicator = document.getElementById('kpi-benefit-indicator');
-                if (data.kpiBenefitNaWniosek >= 1000) {
+                if (kpi_benefit_output >= 1000) {
                     kpiBenefitIndicator.textContent = '✓';
                     kpiBenefitIndicator.className = 'indicator good';
                 } else {
